@@ -13,6 +13,12 @@ import static org.junit.jupiter.api.Assertions.*;
 public class ComplaintsCsvTest {
 
     @Test
+    public void testParse(){
+    
+    }
+
+
+    @Test
     public void testLoadComplaintsFromCsv() {
         // Load the CSV file from test resources
         InputStreamReader reader = new InputStreamReader(

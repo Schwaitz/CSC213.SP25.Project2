@@ -2,7 +2,9 @@ package edu.canisius.csc213.complaints.service;
 
 import edu.canisius.csc213.complaints.model.Complaint;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ComplaintSimilarityService {
 
@@ -13,16 +15,26 @@ public class ComplaintSimilarityService {
     }
 
     public List<Complaint> findTop3Similar(Complaint target) {
-        // TODO: Return top 3 most similar complaints (excluding itself)
+        // return target.stream()
+        //         .filter(book -> !book.id.equals(target.id))
+        //         .sorted(Comparator.comparingDouble(book -> -cosineSimilarity(target.embedding, book.embedding)))
+        //         .limit(3)
+        //         .collect(Collectors.toList());
         return List.of();
     }
 
     private double cosineSimilarity(double[] a, double[] b) {
-        // TODO: Implement cosine similarity
-        return 0.0;
+        double dot = 0, normA = 0, normB = 0;
+        for (int i = 0; i < a.length; i++) {
+            dot += a[i] * b[i];
+            normA += a[i] * a[i];
+            normB += b[i] * b[i];
+        }
+        return dot / (Math.sqrt(normA) * Math.sqrt(normB));
+    }
     }
 
-    private static class ComplaintWithScore {
+    class ComplaintWithScore {
         Complaint complaint;
         double score;
 
@@ -31,4 +43,3 @@ public class ComplaintSimilarityService {
             this.score = s;
         }
     }
-}
