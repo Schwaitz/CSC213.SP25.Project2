@@ -34,7 +34,7 @@ public class Testing {
             List<Complaint> complaints = ComplaintLoader.loadComplaintsWithEmbeddings(csvPath, jsonlPath);
 
             for(Complaint c : complaints) {
-                System.out.println(c);
+              System.out.println(c);
             }
         } catch (Exception e) {
             e.printStackTrace();
