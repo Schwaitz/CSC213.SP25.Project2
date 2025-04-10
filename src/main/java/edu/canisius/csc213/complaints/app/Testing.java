@@ -1,7 +1,6 @@
 package edu.canisius.csc213.complaints.app;
 
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
@@ -38,7 +37,6 @@ public class Testing {
                 System.out.println(c);
             }
         } catch (Exception e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
 

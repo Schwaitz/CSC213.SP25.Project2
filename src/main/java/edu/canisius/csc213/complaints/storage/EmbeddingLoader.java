@@ -3,7 +3,6 @@ package edu.canisius.csc213.complaints.storage;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.util.TypeKey;
 
 import java.io.*;
 import java.util.*;
@@ -29,6 +28,8 @@ public class EmbeddingLoader {
         while (scnr.hasNext()) {
             lines.add(scnr.nextLine());
         }
+
+        scnr.close();
 
         Map<Long, double[]> embeddings = new HashMap<>();
 
