@@ -1,6 +1,9 @@
 package edu.canisius.csc213.complaints.storage;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.util.TypeKey;
 
 import java.io.*;
 import java.util.*;
@@ -11,8 +14,8 @@ public class EmbeddingLoader {
      * Loads complaint embeddings from a JSONL (newline-delimited JSON) file.
      * Each line must be a JSON object with:
      * {
-     *   "complaintId": <long>,
-     *   "embedding": [<double>, <double>, ...]
+     * "complaintId": <long>,
+     * "embedding": [<double>, <double>, ...]
      * }
      *
      * @param jsonlStream InputStream to the JSONL file
@@ -20,8 +23,29 @@ public class EmbeddingLoader {
      * @throws IOException if the file cannot be read or parsed
      */
     public static Map<Long, double[]> loadEmbeddings(InputStream jsonlStream) throws IOException {
-        // TODO: Implement parsing of JSONL to extract complaintId and embedding
-        return new HashMap<>();
+        Scanner scnr = new Scanner(jsonlStream);
+
+        ArrayList<String> lines = new ArrayList<>();
+        while (scnr.hasNext()) {
+            lines.add(scnr.nextLine());
+        }
+
+        Map<Long, double[]> embeddings = new HashMap<>();
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        for (String line : lines) {
+            JsonNode jsonNode = objectMapper.readTree(line);
+            long id = jsonNode.get("id").asLong();
+
+            ArrayNode embeddingArray = (ArrayNode) jsonNode.get("embedding");
+            double[] embedding = new double[embeddingArray.size()];
+            for (int i = 0; i < embeddingArray.size(); i++) {
+                embedding[i] = embeddingArray.get(i).asDouble();
+            }
+            embeddings.put(id, embedding);
+        }
+
+        return embeddings;
     }
 
 }

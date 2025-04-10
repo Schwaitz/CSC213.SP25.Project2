@@ -12,17 +12,13 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class ComplaintsCsvTest {
 
-    @Test
-    public void testParse(){
-    
-    }
 
 
     @Test
     public void testLoadComplaintsFromCsv() {
         // Load the CSV file from test resources
         InputStreamReader reader = new InputStreamReader(
-                getClass().getResourceAsStream("/complaints_sample_1_30.csv"),
+                getClass().getResourceAsStream("src/main/resources/complaints_sample_1_30.csv"),
                 StandardCharsets.UTF_8
         );
 

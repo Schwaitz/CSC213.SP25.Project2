@@ -15,12 +15,11 @@ public class ComplaintSimilarityService {
     }
 
     public List<Complaint> findTop3Similar(Complaint target) {
-        // return target.stream()
-        //         .filter(book -> !book.id.equals(target.id))
-        //         .sorted(Comparator.comparingDouble(book -> -cosineSimilarity(target.embedding, book.embedding)))
-        //         .limit(3)
-        //         .collect(Collectors.toList());
-        return List.of();
+        return complaints.stream()
+        .filter(complaint -> complaint.getComplaintId() != (target.getComplaintId()))
+        .sorted(Comparator.comparingDouble(complaint -> -cosineSimilarity(target.getEmbedding(), complaint.getEmbedding())))
+        .limit(3)
+        .collect(Collectors.toList());
     }
 
     private double cosineSimilarity(double[] a, double[] b) {
