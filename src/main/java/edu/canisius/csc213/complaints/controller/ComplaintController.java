@@ -2,11 +2,15 @@ package edu.canisius.csc213.complaints.controller;
 
 import edu.canisius.csc213.complaints.model.Complaint;
 import edu.canisius.csc213.complaints.service.ComplaintSimilarityService;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -18,22 +22,78 @@ public class ComplaintController {
     public ComplaintController(List<Complaint> complaints, ComplaintSimilarityService similarityService) {
         this.complaints = complaints;
         this.similarityService = similarityService;
+
     }
 
     @GetMapping("/complaint")
-    public String showComplaint(@RequestParam(defaultValue = "0") int index, Model model) {
+    public String showComplaint(@RequestParam(defaultValue = "0") String index, Model model) {
         int max = complaints.size();
-        if (index < 0) index = 0;
-        if (index >= max) index = max - 1;
+        String error = null;
 
-        Complaint current = complaints.get(index);
+        int indexInt = 0;
+        Logger logger = LoggerFactory.getLogger(ComplaintController.class);
+
+        try {
+            indexInt = Integer.parseInt(index);
+
+        } catch (NumberFormatException e) {
+            indexInt = 0;
+            error = "Invalid index. Going to the first complaint.";
+            logger.error(error);
+        }
+
+        if (indexInt < 0) {
+            indexInt = 0;
+            error = "Index cannot be negative. Going to the first complaint.";
+            logger.error(error);
+        }
+        if (indexInt >= max) {
+            indexInt = max - 1;
+            error = "Index exceeds the number of complaints. Going to the last complaint.";
+            logger.error(error);
+        }
+
+        Complaint current = complaints.get(indexInt);
         List<Complaint> similar = similarityService.findTop3Similar(current);
 
+        model.addAttribute("error", error);
         model.addAttribute("complaint", current);
         model.addAttribute("similarComplaints", similar);
-        model.addAttribute("prevIndex", index > 0 ? index - 1 : 0);
-        model.addAttribute("nextIndex", index < max - 1 ? index + 1 : max - 1);
+        model.addAttribute("prevIndex", indexInt > 0 ? indexInt - 1 : 0);
+        model.addAttribute("nextIndex", indexInt < max - 1 ? indexInt + 1 : max - 1);
 
         return "complaint"; // ← This maps to complaint.html
+    }
+
+    @GetMapping("/search")
+    public String showSearch(@RequestParam(defaultValue = "0") String company, Model model) {
+        String error = null;
+        ArrayList<Complaint> searchArray = new ArrayList<>();
+
+        if(company.equals("0")) {
+            error = "Please enter a company name to search.";
+            model.addAttribute("error", error);
+            return "search"; 
+        }
+
+        Logger logger = LoggerFactory.getLogger(ComplaintController.class);
+        if (!company.equals("0")) {
+            for (Complaint complaint : complaints) {
+                String c = complaint.getCompany().toLowerCase();
+                if (c.contains(company.toLowerCase())) {
+                    logger.error("found: " + complaint.getCompany());
+                    searchArray.add(complaint);
+                }
+            }
+        }
+
+        if (searchArray.isEmpty()) {
+            error = "No complaints found for the company: " + company;
+        }
+
+        model.addAttribute("error", error);
+        model.addAttribute("searchResults", searchArray);
+
+        return "search"; // ← This maps to search.html
     }
 }
